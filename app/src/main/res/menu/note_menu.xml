@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_alarm"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_access_alarms_black_24dp"
+        android:title="Set Alarm"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_delete_black_24dp"
+        android:title="Delete"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_done"
+        android:orderInCategory="3"
+        android:icon="@drawable/ic_done_black_24dp"
+        android:title="Done"
+        app:showAsAction="always" />
+
+</menu>
