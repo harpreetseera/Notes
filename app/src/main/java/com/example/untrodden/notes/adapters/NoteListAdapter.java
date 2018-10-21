@@ -61,61 +61,74 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         NoteListData noteListData = noteList.get(position);
-
-
-
         String desc = noteListData.getNoteDescription();
+        String title = noteListData.getNoteTitle();
         String searchText  = preferences.getString("search_text",null);
         Log.d(TAG, "onBindViewHolder: search text is "+searchText);
         if(searchText!=null) {
             if (searchText.length() > 0) {
 
                 if (searchText != "") {
-                    //color your text here
-//            int index = desc.indexOf(searchText);
-//            SpannableStringBuilder sb=null;
-//            while(index>0){
-//                sb= new SpannableStringBuilder(desc);
-//                ForegroundColorSpan fcs = new ForegroundColorSpan(Color.rgb(158, 158, 158)); //specify color here
-//                sb.setSpan(fcs, index, searchText.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-//                index = desc.indexOf(searchText,index+1);
-//                index--;
-//
-//            }
-//            holder.noteDescription.setText(sb);
-
-
                     SpannableStringBuilder sb = new SpannableStringBuilder(desc);
+                    SpannableStringBuilder sb2 = new SpannableStringBuilder(title);
                     Pattern word = Pattern.compile(searchText.toLowerCase());
                     Matcher match = word.matcher(desc.toLowerCase());
+                    Matcher match2 = word.matcher(title.toLowerCase());
+                    while (match.find()) {
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.WHITE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                        sb.setSpan(highlightSpan, match.start(), match.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    while (match2.find()) {
+                        ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.WHITE});
+                        TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
+                        sb2.setSpan(highlightSpan, match2.start(), match2.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                    holder.noteDescription.setText(sb);
+                    holder.noteTitle.setText(sb2);
+                    } else {
+                    holder.noteDescription.setText(Html.fromHtml(desc));
+                    holder.noteTitle.setText(Html.fromHtml(title));
+                }
+            }
+        } else{
+            holder.noteDescription.setText(noteListData.getNoteDescription());
+            holder.noteTitle.setText(noteListData.getNoteTitle());
+        }
+    }
+
+    private String setHighlightedText(String searchText,String textToBeSearched) {
+        String highlightedText=null;
+
+        if (searchText != null) {
+            if (searchText.length() > 0) {
+
+
+                if (searchText != "") {
+                    SpannableStringBuilder sb = new SpannableStringBuilder(textToBeSearched);
+                    Pattern word = Pattern.compile(searchText.toLowerCase());
+                    Matcher match = word.matcher(textToBeSearched.toLowerCase());
 
                     while (match.find()) {
                         ColorStateList blueColor = new ColorStateList(new int[][]{new int[]{}}, new int[]{Color.WHITE});
                         TextAppearanceSpan highlightSpan = new TextAppearanceSpan(null, Typeface.BOLD, -1, blueColor, null);
                         sb.setSpan(highlightSpan, match.start(), match.end(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
-                    holder.noteDescription.setText(sb);
+                    //       holder.noteDescription.setText(sb);
+                    highlightedText= sb.toString();
 
 
                 } else {
-                    holder.noteDescription.setText(Html.fromHtml(desc));
+                    //    holder.noteDescription.setText(Html.fromHtml(desc));
+                    highlightedText = Html.fromHtml(textToBeSearched).toString();
                 }
 
             }
         }
-        else{
-            holder.noteDescription.setText(noteListData.getNoteDescription());
 
-        }
+        return highlightedText;
+    }
 
-
-
-
-
-
-
-        holder.noteTitle.setText(noteListData.getNoteTitle());
-   }
 
     @Override
     public int getItemCount() {

@@ -8,7 +8,11 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Log;
+
 import com.example.untrodden.notes.service.AlarmService;
+
+import static android.content.ContentValues.TAG;
 
 public class AlarmReceiver extends WakefulBroadcastReceiver {
 
@@ -16,7 +20,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
 
 
-    Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+    Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (alarmUri == null) {
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }

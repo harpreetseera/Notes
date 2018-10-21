@@ -24,7 +24,7 @@ public interface DatabaseAccessObject {
     @Query( "SELECT * FROM notes_table")
     public List<NotesTable> getNotelist();
 
-    @Query( "SELECT * FROM notes_table WHERE note_detail LIKE :key")
+    @Query( "SELECT * FROM notes_table WHERE note_detail LIKE :key OR note_title LIKE :key")
     public List<NotesTable> searchNotes(String key);
 
     @Query("UPDATE notes_table SET note_detail = :noteDetail  WHERE noteNo = :noteNo")

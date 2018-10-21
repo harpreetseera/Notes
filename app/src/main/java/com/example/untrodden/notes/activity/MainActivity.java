@@ -1,5 +1,7 @@
 package com.example.untrodden.notes.activity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.example.untrodden.notes.R;
+import com.example.untrodden.notes.Utils.Constants;
 import com.example.untrodden.notes.adapters.NoteListAdapter;
 import com.example.untrodden.notes.itemTouchListener.RecyclerTouchListener;
 import com.example.untrodden.notes.modal.NoteListData;
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
              Toolbar mToolbar =  (Toolbar) findViewById(R.id.toolbar);
              setActionBar(mToolbar);
         }
+
+        createNotificationChannel();
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         }));
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.note_search, menu);
@@ -133,6 +139,22 @@ public class MainActivity extends AppCompatActivity {
     private void addNoteData() {
 
         new AsyncCaller(null).execute();
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private class AsyncCaller extends AsyncTask<Void, Void, Void>
