@@ -19,17 +19,26 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.untrodden.notes.WorkManager.NotifyWorker;
 import com.example.untrodden.notes.broadcastReceiver.AlarmReceiver;
 import com.example.untrodden.notes.R;
 import com.example.untrodden.notes.roomPersistence.NotesTable;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 public class NoteActivity extends AppCompatActivity {
 Button btnDone;
 EditText etNoteDetail,etNoteTitle;
 int noteNo;
 private int mYear, mMonth, mDay, mHour, mMinute;
+public final String WORK_TAG  = "NOTIFICATION_WORK_TAG";
+public final String DB_EVENT_TAG  = "NOTIFICATION_EVENT_TAG";
+public final int NOTIFICATION_ID  = 001;
 
 
 
@@ -153,11 +162,28 @@ private int mYear, mMonth, mDay, mHour, mMinute;
         c.set(mYear,mMonth,mDay,hourOfDay,minute);
 
 
-        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(NoteActivity.this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-        // cal.add(Calendar.SECOND, 5);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+//        AlarmManager alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//        Intent intent = new Intent(NoteActivity.this, AlarmReceiver.class);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+//        // cal.add(Calendar.SECOND, 5);
+//  //      alarmMgr.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+//
+//        OneTimeWorkRequest simpleRequest = new OneTimeWorkRequest.Builder(MyWorker.class)
+//                .build();
+//        WorkManager.getInstance().enqueue(simpleRequest);
+//
+//
+//      store DBEventID to pass it to the PendingIntent and open the appropriate event page on notification click
+        Data inputData = new Data.Builder().putInt(DB_EVENT_TAG, NOTIFICATION_ID).build();
+//      we then retrieve it inside the NotifyWorker with:
+//      final int DBEventID = getInputData().getInt(DBEventIDTag, ERROR_VALUE);
+
+        OneTimeWorkRequest notificationWork = new OneTimeWorkRequest.Builder(NotifyWorker.class)
+                .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+                .setInputData(inputData)
+                .addTag(WORK_TAG)
+                .build();
+        WorkManager.getInstance().enqueue(notificationWork);
 
 
     }
